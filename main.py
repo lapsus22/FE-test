@@ -147,6 +147,64 @@ def pagina17(data):
     df17.to_csv("pagina17.csv",index=False)
 
 
+def pagina18(data):
+    pagina18 = data.pages[17]
+
+    table_settings={
+    "vertical_strategy":"text",
+    "horizontal_strategy":"lines"
+    }
+    tables18 = pagina18.extract_table(table_settings)
+    EuR = tables18[:18]
+    UsD = tables18[19:]
+    df18 = pd.DataFrame(EuR[1:],columns=EuR[0])
+    df18b = pd.DataFrame(UsD[1:],columns=UsD[0])
+    columnes = df18.columns
+    for x in columnes:
+        df18[x]=pd.to_numeric(df18[x],errors="ignore")
+    df18.to_csv("pagina18a.csv",index=False)
+    columnes = df18b.columns
+    for x in columnes:
+        df18b[x]=pd.to_numeric(df18b[x],errors="ignore")
+    df18b.to_csv("pagina18b.csv",index=False)
+
+
+def pagina19(data):
+    pagina19 =data.pages[18]
+    table_settings={
+    "vertical_strategy":"text",
+    "horizontal_strategy":"text",
+    "snap_y_tolerance":5,
+    "intersection_x_tolerance":5,
+    
+    }
+    crop19a = pagina19.within_bbox((0,50, pagina19.width,310))
+    table19a = crop19a.extract_table(table_settings)
+    columns = table19a[0]
+    columns[0]="Name"
+    df19a = pd.DataFrame(table19a[1:],columns=columns)
+    for x in columns:
+        df19a[x]=pd.to_numeric(df19a[x],errors="ignore")
+    df19a.to_csv("pagina19a.csv",index=False)
+
+    table_settings2={
+    "vertical_strategy":"text",
+    "horizontal_strategy":"lines",
+    "snap_y_tolerance":9,
+    "intersection_x_tolerance":5,
+    "explicit_horizontal_lines":[615]
+    }
+    crop19b = pagina19.within_bbox((0,330, pagina19.width,620))
+
+    table19b = crop19b.extract_table(table_settings2)
+    colmn=["STOXX Europe 600 Sector","Portfolio weight over/underweight - (% points)","Portfolio position (%)","Strength of over/underweight in % of sector weight"]
+    df19b = pd.DataFrame(table19b[3:],columns=colmn)
+    for x in colmn:
+        df19b[x]=pd.to_numeric(df19b[x],errors="ignore")
+    df19b.to_csv("pagina19b.csv",index=False)
+
+
+
 def main():
     data = pdfp.open("241025 Unicredit Macro & Markets Weekly Focus - python.pdf")
 
@@ -154,6 +212,7 @@ def main():
     pagina3(data)
     pagina16(data)
     pagina17(data)
+    pagina19(data)
 
 
 if __name__=="__main__":
