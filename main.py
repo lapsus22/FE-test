@@ -34,7 +34,7 @@ for x in cols:
     average.append(new_data[x].mean()) 
 aux = pd.DataFrame([average], columns=["Name","Current","1M","3M","6M","12M","YTD","QTD"]) 
 test = pd.concat([new_data,aux])
-test.to_csv("pagina2.csv")
+test.to_csv("pagina2.csv",index=False)
 
 #Top i bot perfoming indexes a t 12M
 dates12 = new_data[["Name","12M"]]
@@ -62,4 +62,11 @@ table_settings2={
 table_2=pg_2.extract_table(table_settings2)
 table_2[0]=["Date 26 oct - 01 Nov 2024","Time (CET)","Country","Indicator/Event","Period","UniCredit estimates","Consensus (Bloomberg)","Previous"]
 df2 = pd.DataFrame(table_2[2:], columns=table_2[0])
-df2.to_csv("pagina3.csv",index=False) # Encara tentatiu
+columns = ["UniCredit estimates","Consensus (Bloomberg)","Previous"]
+for x in columns:
+    df2[x]=pd.to_numeric(df2[x],errors="ignore")
+tst2 = df2.replace(r'^\s*$', np.nan, regex=True)
+tst2 = tst2.replace(r'\n','', regex=True)
+tst2.to_csv("pagina3.csv",index=False)
+
+
